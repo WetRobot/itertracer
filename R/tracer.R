@@ -2,6 +2,14 @@
 
 
 
+
+#' @rdname tracer_callbacks
+#' @export
+#' @details
+#' - `tracer_callbacks_defaults` returns a list of default callback functions
+#'   used by [tracer] when the user does not define custom callbacks
+#' @importFrom git2r repository commits in_repository
+#' @importFrom utils sessionInfo
 tracer_callbacks_defaults <- function() {
   callbacks <- list(
     sample_chains = function(chain_space, chain_iterator_fun, n_parallel = 1L) {
@@ -23,10 +31,6 @@ tracer_callbacks_defaults <- function() {
           on.exit(parallel::stopCluster(cl))
 
           parallel::clusterCall(cl, fun = function(x) .libPaths(x), .libPaths())
-          parallel::clusterCall(cl, fun = function() {
-            library("data.table")
-            library("dirichlet")
-          })
 
           gr <- as.environment(as.list(globalenv()))
           parent.env(gr) <- globalenv()
@@ -45,7 +49,6 @@ tracer_callbacks_defaults <- function() {
       }
     },
     on_init = function(arg_list) {
-      requireNamespace("git2r")
       n_burn <- arg_list[["n_burn"]]
       n_skip <- arg_list[["n_skip"]]
 
@@ -86,16 +89,20 @@ tracer_callbacks_defaults <- function() {
           file = paste0(sample_dir, "tracer_log.txt"), append = FALSE)
 
       sink(file = paste0(sample_dir, "tracer_log.txt"), append = TRUE)
-      print(sessionInfo())
-      cat("\n * tracer: git status:\n")
-      cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
-      summary(git2r::repository())
+      print(utils::sessionInfo())
+      if (git2r::in_repository()) {
+        cat("\n * tracer: git status:\n")
+        cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
+        summary(git2r::repository())
+      }
       sink()
       sink(file = "tracer_log.txt", append = TRUE)
-      print(sessionInfo())
-      cat("\n * tracer: git status:\n")
-      cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
-      summary(git2r::repository())
+      print(utils::sessionInfo())
+      if (git2r::in_repository()) {
+        cat("\n * tracer: git status:\n")
+        cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
+        summary(git2r::repository())
+      }
       sink()
 
       arg_list[["init_time"]] <- proc.time()
@@ -256,9 +263,42 @@ tracer_callbacks_defaults <- function() {
 }
 
 
+#' @title [tracer] Callback Functions
+#' @description
+#'
+#' Handle callback functions passed to [tracer].
+#'
 
 
+#' @rdname tracer_callbacks
 #' @export
+#' @param sample_chains
+#' function to go through the separate chains; e.g. an application of
+#' [parallel::mclapply]
+#' @param on_init
+#' called on initiation of [tracer]
+#' @param param_order
+#' when stepping through parameters within an iteration, this function is called
+#' to determine the order of the parameters
+#' @param on_iter_start
+#' called on start of an iteration before anything else
+#' @param save_iter
+#' called to save the result of an iteration
+#' @param on_iter_finish
+#' called on finishing an iteration
+#' @param break_if
+#' iterating is terminated when this function returns TRUE; you can e.g.
+#' set a maximum time this way
+#' @param on_chain_completion
+#' called when all the iterations have been completed in a chain
+#' @param on_sampling_completion
+#' called when all chains have finished / have been interrupted
+#' @param on_exit
+#' called on exit even when an error is raised by using [on.exit]
+#' @details
+#' - `tracer_callbacks` accepts functions as arguments and returns a list
+#'   of callback functions to be used by [tracer], supplemented by
+#'   defaults from [tracer_callbacks_defaults] as necessary
 tracer_callbacks <- function(
   sample_chains = NULL,
   on_init = NULL,
@@ -319,7 +359,7 @@ random_seeds <- function(n) {
     n > 0,
     n %% 1 == 0
   )
-  as.integer(runif(n = n, min = 1L, max = 1e9L + 1L))
+  as.integer(stats::runif(n = n, min = 1L, max = 1e9L + 1L))
 }
 
 
@@ -362,7 +402,7 @@ random_seeds <- function(n) {
 #'
 #' - named list of functions called at various points of the process (pre-iter,
 #'   post-iter, etc.)
-#' - supplied to [tracer::tracer_callbacks]
+#' - supplied to [tracer_callbacks]
 #' @param n_iter number of iterations
 #' @param n_chains number of separate chains to sample
 #' @param n_burn number of iterations out of \code{n_iter} to run before
@@ -405,6 +445,8 @@ random_seeds <- function(n) {
 #'   n_parallel = 1L
 #' )
 #'
+#' @import data.table
+#' @export
 tracer <- function(
   param_init,
   step_funs,
@@ -632,13 +674,14 @@ tracer <- function(
 
 
 #' @export
+#' @importFrom utils str
 print.tracer <- function(x, ...) {
   cat("--- tracer object ---\n")
   cat("params:\n")
   param_nms <- names(x[["trace_list"]])
   lapply(param_nms, function(param_nm) {
     cat(paste0("  ", param_nm, ": "))
-    str(x[["trace_list"]][[param_nm]])
+    utils::str(x[["trace_list"]][[param_nm]])
   })
   for (elem_nm in c("n_iter", "n_burn", "n_skip", "n_chains", "seeds")) {
     cat(elem_nm, ": ", deparse(x[["call_args"]][[elem_nm]]), "\n", sep = "")

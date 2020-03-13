@@ -7,6 +7,8 @@ Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Description: A framework for collecting a trace of iterations, for instance
   for MCMC sampling.
 License: MIT + file LICENSE
+Depends: R (>= 3.5.0)
+Imports: data.table, git2r, stringr, utils, stats
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

@@ -67,7 +67,7 @@ course cannot share results between different threads)
 \itemize{
 \item named list of functions called at various points of the process (pre-iter,
 post-iter, etc.)
-\item supplied to \link[tracer:tracer_callbacks]{tracer::tracer_callbacks}
+\item supplied to \link{tracer_callbacks}
 }}
 
 \item{n_iter}{number of iterations}

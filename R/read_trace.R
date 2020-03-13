@@ -51,7 +51,8 @@ read_trace_files <- function(
   info <- data.table::data.table(
     file_name = dir(path = dir, pattern = keep_re)
   )
-  info[, "file_path" := normalizePath(paste0(dir, "/", file_name))]
+  data.table::set(info, j = "file_path",
+                  value = normalizePath(paste0(dir, "/", info[["file_name"]])))
 
   param_nm_res <- unlist(strsplit(
     gsub("(%%CHAIN%%)|(%%ITER%%)", "\\\\d+", pattern),
@@ -70,7 +71,7 @@ read_trace_files <- function(
 
   info[, "PARAM" := file_param_nms]
   data.table::setkeyv(info, names(info))
-  info <- info[PARAM %in% param_nm_set, ]
+  info <- info[info[["PARAM"]] %in% param_nm_set, ]
 
   iter_res <- unlist(strsplit(gsub(
     "%%PARAM%%",
@@ -93,7 +94,7 @@ read_trace_files <- function(
   }
 
   info[, "ITER" := file_iters]
-  info <- info[ITER %in% iter_set, ]
+  info <- info[info[["ITER"]] %in% iter_set, ]
 
   chain_res <- unlist(strsplit(gsub(
     "%%PARAM%%",
@@ -115,11 +116,17 @@ read_trace_files <- function(
   }
 
   info[, "CHAIN" := file_chains]
-  info <- info[CHAIN %in% chain_set, ]
+  info <- info[info[["CHAIN"]] %in% chain_set, ]
 
-  min_allowed_iter <- info[, .(min(ITER)), keyby = c("CHAIN", "PARAM")][, max(V1)]
-  max_allowed_iter <- info[, .(max(ITER)), keyby = c("CHAIN", "PARAM")][, min(V1)]
-  info <- info[data.table::between(ITER, min_allowed_iter, max_allowed_iter), ]
+  min_allowed_iter <- min(info[
+    j = lapply(.SD, min), .SDcols = "ITER", keyby = c("CHAIN", "PARAM")
+    ][[1L]])
+  max_allowed_iter <- max(info[
+    j = lapply(.SD, min), .SDcols = "ITER", keyby = c("CHAIN", "PARAM")
+    ][[1L]])
+  info <- info[
+    data.table::between(info[["ITER"]], min_allowed_iter, max_allowed_iter),
+    ]
 
   test_list <- list(
     test_pattern = gsub(
@@ -136,9 +143,10 @@ read_trace_files <- function(
     )
   ), env = test_list))
 
-  n_missing_file_paths <- info[is.na(file_name), .N]
+  no_file_name <- is.na(info[["file_name"]])
+  n_missing_file_paths <- info[no_file_name, .N]
   if (n_missing_file_paths > 0) {
-    on.exit(print(info[is.na(file_name), ]))
+    on.exit(print(info[no_file_name, ]))
     stop(n_missing_file_paths, " file paths did not exist; ",
          "see table printout below.")
   }
@@ -149,7 +157,7 @@ read_trace_files <- function(
   samples <- lapply(param_nm_set, function(param_nm) {
 
     first_sample <- readRDS(file = info[
-      i = PARAM == param_nm & !duplicated(PARAM),
+      i = info[["PARAM"]] == param_nm & !duplicated(info[["PARAM"]]),
       j = file_path[1]
       ])
     if (data.table::is.data.table(first_sample)) {
@@ -170,12 +178,14 @@ read_trace_files <- function(
     }
     ENV <- new.env()
 
+    j_dt <- data.table::setDT(list(PARAM = param_nm))
     for (chain_pos in seq_along(chain_set)) {
+      data.table::set(j_dt, j = "CHAIN", value = chain_set[chain_pos])
       for (iter_pos in seq_along(iter_set)) {
+        data.table::set(j_dt, j = "ITER", value = iter_set[iter_pos])
         file_path <- info[
-          i = PARAM == param_nm &
-            CHAIN == chain_set[chain_pos] &
-            ITER == iter_set[iter_pos],
+          i = j_dt,
+          on = names(j_dt),
           j = file_path
           ]
         eval(assign_expr)
@@ -221,7 +231,11 @@ read_latest_trace_files <- function(
     ),
     split = "%%ITER%%"
   ))
-  dt[, "iter" := sub(iter_res[2], "", sub(iter_res[1], "", file_name))]
+  data.table::set(
+    dt,
+    j = "iter",
+    value = sub(iter_res[2], "", sub(iter_res[1], "", dt[["file_name"]]))
+  )
   max_iter <- max(as.integer(dt[["iter"]]))
   stopifnot(
     max_iter > n_latest_iters

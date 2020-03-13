@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+tracer/
+tracer_log.txt
