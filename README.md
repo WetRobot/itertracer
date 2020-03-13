@@ -2,7 +2,7 @@
 # tracer
 
 <!-- badges: start -->
-[![Build Status](https://travis-ci.org/WetRobot/tracer.png?branch=master)](https://travis-ci.org/WetRobot/tracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobot/tracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/tracer) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/tracer)](https://cran.r-project.org/package=tracer)
+[![Build Status](https://travis-ci.org/WetRobot/tracer.png?branch=master)](https://travis-ci.org/WetRobot/tracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobot/tracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/tracer)
 <!-- badges: end -->
 
 tracer enables easy tracing of an iterative process such as Gibbs sampling.
