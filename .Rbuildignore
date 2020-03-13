@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 ^tracer_log.txt$
 ^tracer$
+^\.travis\.yml$
