@@ -4,3 +4,4 @@
 ^tracer_log.txt$
 ^tracer$
 ^\.travis\.yml$
+^appveyor\.yml$
