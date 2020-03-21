@@ -615,7 +615,10 @@ tracer <- function(
 
         param_nms <- callbacks[["param_order"]](arg_list)
         for (param_nm in param_nms) {
-          arg_list[["param_list"]][[param_nm]] <- step_funs[[param_nm]](arg_list)
+          arg_list[["param_list"]][[param_nm]] <- eval(substitute(
+            step_funs[[param_nm]](arg_list),
+            list(param_nm = param_nm)
+          ))
         }
 
         callbacks[["save_iter"]](arg_list)
