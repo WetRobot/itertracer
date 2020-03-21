@@ -1,4 +1,38 @@
 
+
+#' @title Read Trace Files
+#' @description
+#' Read trace files into list of arrays / data.tables.
+#'
+#' @param dir `[NULL, character]` (optional, default `NULL`)
+#'
+#' - `NULL`: directory is taken as the newest in `tracer/`
+#' - `character`: read files from this dir
+#' @param param_nm_set `[NULL, character]` (optional, default `NULL`)
+#'
+#' set of parameter names the traces of which will be read into R.
+#'
+#' - `NULL`: guess the whole set of names based on file names in `dir`
+#' - `character`: only read these parameters
+#'
+#' @param iter_set `[NULL, integer]` (optional, default `NULL`)
+#'
+#' - `NULL`: read all possible iterations
+#' - `integer`: read these iterations (only)
+#'
+#' @param chain_set `[NULL, integer]` (optional, default `NULL`)
+#'
+#' - `NULL`: read all possible chains
+#' - `integer`: read these chains (only)
+#'
+#' @param pattern `[character]` (mandatory)
+#'
+#' default `"^%%PARAM%%\\Q_chain_\\E%%CHAIN%%\\Q_iter_\\E%%ITER%%\\Q.rds\\E$"`;
+#' determines how iteration, chain, and parameter name are identified from
+#' file names
+#'
+#' @export
+#' @importFrom data.table set setkeyv setDT is.data.table data.table
 read_trace_files <- function(
   dir = NULL,
   param_nm_set = NULL,
@@ -9,7 +43,7 @@ read_trace_files <- function(
   requireNamespace("data.table")
   requireNamespace("stringr")
   if (is.null(dir)) {
-    dir <- utils::tail(dir("gibbs_trace/", full.names = TRUE), 1)
+    dir <- utils::tail(dir("tracer/", full.names = TRUE), 1)
     message("* read_trace_files: dir was NULL, selected dir = ", deparse(dir))
   }
 
@@ -118,12 +152,12 @@ read_trace_files <- function(
   info[, "CHAIN" := file_chains]
   info <- info[info[["CHAIN"]] %in% chain_set, ]
 
-  min_allowed_iter <- min(info[
+  min_allowed_iter <- max(info[
     j = lapply(.SD, min), .SDcols = "ITER", keyby = c("CHAIN", "PARAM")
-    ][[1L]])
-  max_allowed_iter <- max(info[
-    j = lapply(.SD, min), .SDcols = "ITER", keyby = c("CHAIN", "PARAM")
-    ][[1L]])
+    ][["ITER"]])
+  max_allowed_iter <- min(info[
+    j = lapply(.SD, max), .SDcols = "ITER", keyby = c("CHAIN", "PARAM")
+    ][["ITER"]])
   info <- info[
     data.table::between(info[["ITER"]], min_allowed_iter, max_allowed_iter),
     ]
