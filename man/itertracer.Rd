@@ -36,7 +36,7 @@ must be equal to \code{n_chains}
 
 \item{step_funs}{\link{list}``
 \itemize{
-\item a list of functions for sampling each random variables' step (one tracer
+\item a list of functions for sampling each random variables' step (oneitertracer
 iteration = one step for each variable)
 \item matched with \code{param_init} based on names
 \item the order of calling each step fun is determined by callback \code{param_order}
@@ -97,7 +97,7 @@ Run an iterative process and collect a trace of the iterations.
 \examples{
 ## beta-binomial Gibbs sampling, multi-core
 
-g <- tracer(
+g <-itertracer(
   fixed = list(n = 20L),
   param_init = lapply(list(x = 10, theta = 0.5), as.array),
   step_funs = list(

@@ -2,7 +2,7 @@
 # itertracer
 
 <!-- badges: start -->
-[![Build Status](https://travis-ci.org/WetRobot/tracer.png?branch=master)](https://travis-ci.org/WetRobot/itertracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobot/tracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/itertracer)
+[![Build Status](https://travis-ci.org/WetRobotitertracer.png?branch=master)](https://travis-ci.org/WetRobot/itertracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobotitertracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/itertracer)
 <!-- badges: end -->
 
 itertracer enables easy tracing of an iterative process such as Gibbs sampling.

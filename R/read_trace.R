@@ -6,7 +6,7 @@
 #'
 #' @param dir `[NULL, character]` (optional, default `NULL`)
 #'
-#' - `NULL`: directory is taken as the newest in `tracer/`
+#' - `NULL`: directory is taken as the newest in itertracer/`
 #' - `character`: read files from this dir
 #' @param param_nm_set `[NULL, character]` (optional, default `NULL`)
 #'
@@ -43,7 +43,7 @@ read_trace_files <- function(
   requireNamespace("data.table")
   requireNamespace("stringr")
   if (is.null(dir)) {
-    dir <- utils::tail(dir("tracer/", full.names = TRUE), 1)
+    dir <- utils::tail(dir(itertracer/", full.names = TRUE), 1)
     message("* read_trace_files: dir was NULL, selected dir = ", deparse(dir))
   }
 

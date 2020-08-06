@@ -7,7 +7,7 @@
 #' @export
 #' @details
 #' - `itertracer_callbacks_defaults` returns a list of default callback functions
-#'   used by [tracer] when the user does not define custom callbacks
+#'   used by itertracer] when the user does not define custom callbacks
 #' @importFrom git2r repository commits in_repository
 #' @importFrom utils sessionInfo
 itertracer_callbacks_defaults <- function() {
@@ -56,13 +56,13 @@ itertracer_callbacks_defaults <- function() {
       n_iter <- arg_list[["n_iter"]]
       n_chains <- arg_list[["n_chains"]]
 
-      if (!dir.exists("tracer")) {
-        dir.create("tracer")
+      if (!dir.exists(itertracer")) {
+        dir.create(itertracer")
       }
-      sample_dir <- paste0("tracer/", gsub("[^0-9]", "_", t), "/")
+      sample_dir <- paste0(itertracer/", gsub("[^0-9]", "_", t), "/")
       dir.create(sample_dir)
 
-      msg <- paste0("* tracer: ", t,": starting processing ", n_iter,
+      msg <- paste0("*itertracer: ", t,": starting processing ", n_iter,
                     " iterations in ", n_chains, " chain(s); saving iters ",
                     "to directory ", deparse(sample_dir))
       msg <- paste0(
@@ -81,25 +81,25 @@ itertracer_callbacks_defaults <- function() {
         asterisks,
         "\n\n\n",
         msg, "\n",
-        "* tracer: sessionInfo():\n"
+        "*itertracer: sessionInfo():\n"
       )
-      cat(msg, file = "tracer_log.txt", append = TRUE)
+      cat(msg, file = itertracer_log.txt", append = TRUE)
       sample_dir_msg <- msg[which(grepl("\\*", msg))[1]:length(msg)]
       cat(sample_dir_msg,
-          file = paste0(sample_dir, "tracer_log.txt"), append = FALSE)
+          file = paste0(sample_dir, itertracer_log.txt"), append = FALSE)
 
-      sink(file = paste0(sample_dir, "tracer_log.txt"), append = TRUE)
+      sink(file = paste0(sample_dir, itertracer_log.txt"), append = TRUE)
       print(utils::sessionInfo())
       if (git2r::in_repository()) {
-        cat("\n * tracer: git status:\n")
+        cat("\n *itertracer: git status:\n")
         cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
         summary(git2r::repository())
       }
       sink()
-      sink(file = "tracer_log.txt", append = TRUE)
+      sink(file = itertracer_log.txt", append = TRUE)
       print(utils::sessionInfo())
       if (git2r::in_repository()) {
-        cat("\n * tracer: git status:\n")
+        cat("\n *itertracer: git status:\n")
         cat("** last commit sha:", git2r::commits(n = 1L)[[1L]][["sha"]], "\n")
         summary(git2r::repository())
       }
@@ -171,7 +171,7 @@ itertracer_callbacks_defaults <- function() {
         ETA_in_time <- time_now + ETA_in_seconds
 
         msg <- paste0(
-          "* tracer: ", time_now, ": ",
+          "*itertracer: ", time_now, ": ",
           "chain ", chain_no, " ",
           "iteration ", iter_no, " ",
           "complete; ",
@@ -181,8 +181,8 @@ itertracer_callbacks_defaults <- function() {
         )
         message(msg)
         msg <- paste0(msg, "\n")
-        cat(msg, file = "tracer_log.txt", append = TRUE)
-        cat(msg, file = paste0(sample_dir, "tracer_log.txt"), append = TRUE)
+        cat(msg, file = itertracer_log.txt", append = TRUE)
+        cat(msg, file = paste0(sample_dir, itertracer_log.txt"), append = TRUE)
         invisible(NULL)
       }
       arg_list
@@ -198,11 +198,11 @@ itertracer_callbacks_defaults <- function() {
       went_over_time <- s_from_start >= max_time
       if (went_over_time) {
         msg <- paste0(
-          "* tracer: reached max_time = ", max_time, " at iter = ", iter_no, " at ",
+          "*itertracer: reached max_time = ", max_time, " at iter = ", iter_no, " at ",
           as.character(Sys.time())
         )
         message(msg)
-        cat(msg, "\n", file = "tracer_log.txt", append = TRUE)
+        cat(msg, "\n", file = itertracer_log.txt", append = TRUE)
       }
       went_over_time
     },
@@ -215,12 +215,12 @@ itertracer_callbacks_defaults <- function() {
       sample_dir <- arg_list[["sample_dir"]]
 
       t <- as.character(Sys.time())
-      msg <- paste0("* tracer: ", t,": chain ", chain_no, " of ", n_iter,
+      msg <- paste0("*itertracer: ", t,": chain ", chain_no, " of ", n_iter,
                     " iterations completed in ",
                     time_elapsed(init_time))
       message(msg)
-      cat("\n", msg, "\n", file = "tracer_log.txt", append = TRUE)
-      cat("\n", msg, "\n", file = paste0(sample_dir, "tracer_log.txt"),
+      cat("\n", msg, "\n", file = itertracer_log.txt", append = TRUE)
+      cat("\n", msg, "\n", file = paste0(sample_dir, itertracer_log.txt"),
           append = TRUE)
       arg_list
     },
@@ -231,24 +231,24 @@ itertracer_callbacks_defaults <- function() {
       sample_dir <- arg_list[["sample_dir"]]
 
       t <- as.character(Sys.time())
-      msg <- paste0("* tracer: ", t,": all ", n_chains," chain(s) and ", n_iter,
+      msg <- paste0("*itertracer: ", t,": all ", n_chains," chain(s) and ", n_iter,
                     " iterations completed in ",
                     time_elapsed(init_time))
       message(msg)
-      cat("\n", msg, "\n", file = "tracer_log.txt", append = TRUE)
-      cat("\n", msg, "\n", file = paste0(sample_dir, "tracer_log.txt"),
+      cat("\n", msg, "\n", file = itertracer_log.txt", append = TRUE)
+      cat("\n", msg, "\n", file = paste0(sample_dir, itertracer_log.txt"),
           append = TRUE)
       arg_list
     },
-    on_exit = function(tracer_object, arg_list, tracer_arg_list) {
+    on_exit = functionitertracer_object, arg_list,itertracer_arg_list) {
       sample_dir <- arg_list[["sample_dir"]]
-      if (!is.null(tracer_object) && dir.exists(sample_dir)) {
-        tracer_object_path <- paste0(sample_dir, "tracer_object.rds")
-        tracer_log_path <- paste0(sample_dir, "tracer_log.txt")
-        saveRDS(object = tracer_object, file = tracer_object_path)
+      if (!is.nullitertracer_object) && dir.exists(sample_dir)) {
+       itertracer_object_path <- paste0(sample_dir, itertracer_object.rds")
+       itertracer_log_path <- paste0(sample_dir, itertracer_log.txt")
+        saveRDS(object =itertracer_object, file =itertracer_object_path)
         sample_dir_file_paths <-  dir(sample_dir, full.names = TRUE)
         sample_dir_file_paths <- normalizePath(sample_dir_file_paths)
-        keep_file_paths <- c(tracer_object_path, tracer_log_path)
+        keep_file_paths <- citertracer_object_path,itertracer_log_path)
         keep_file_paths <- normalizePath(keep_file_paths)
         del_file_paths <- setdiff(
           sample_dir_file_paths, keep_file_paths
@@ -263,10 +263,10 @@ itertracer_callbacks_defaults <- function() {
 }
 
 
-#' @title [tracer] Callback Functions
+#' @title itertracer] Callback Functions
 #' @description
 #'
-#' Handle callback functions passed to [tracer].
+#' Handle callback functions passed to itertracer].
 #'
 
 
@@ -276,7 +276,7 @@ itertracer_callbacks_defaults <- function() {
 #' function to go through the separate chains; e.g. an application of
 #' [parallel::mclapply]
 #' @param on_init
-#' called on initiation of [tracer]
+#' called on initiation of itertracer]
 #' @param param_order
 #' when stepping through parameters within an iteration, this function is called
 #' to determine the order of the parameters
@@ -297,7 +297,7 @@ itertracer_callbacks_defaults <- function() {
 #' called on exit even when an error is raised by using [on.exit]
 #' @details
 #' - `itertracer_callbacks` accepts functions as arguments and returns a list
-#'   of callback functions to be used by [tracer], supplemented by
+#'   of callback functions to be used by itertracer], supplemented by
 #'   defaults from [itertracer_callbacks_defaults] as necessary
 itertracer_callbacks <- function(
   sample_chains = NULL,
@@ -379,7 +379,7 @@ random_seeds <- function(n) {
 #'     must be equal to `n_chains`
 #' @param step_funs [list]``
 #'
-#' - a list of functions for sampling each random variables' step (one tracer
+#' - a list of functions for sampling each random variables' step (oneitertracer
 #'   iteration = one step for each variable)
 #' - matched with `param_init` based on names
 #' - the order of calling each step fun is determined by callback `param_order`
@@ -419,7 +419,7 @@ random_seeds <- function(n) {
 #' @examples
 #' ## beta-binomial Gibbs sampling, multi-core
 #'
-#' g <- tracer(
+#' g <- itertracer(
 #'   fixed = list(n = 20L),
 #'   param_init = lapply(list(x = 10, theta = 0.5), as.array),
 #'   step_funs = list(
@@ -551,7 +551,7 @@ itertracer <- function(
 
   # prep -----------------------------------------------------------------------
   call <- match.call()
-  tracer_arg_list <- mget(names(formals("tracer")))
+ itertracer_arg_list <- mget(names(formals(itertracer")))
 
   callbacks <- do.call(itertracer_callbacks, callbacks, quote = TRUE)
 
@@ -580,9 +580,9 @@ itertracer <- function(
   out <- NULL
   on.exit(
     callbacks[["on_exit"]](
-      tracer_object = out,
+     itertracer_object = out,
       arg_list = arg_list,
-      tracer_arg_list = tracer_arg_list
+     itertracer_arg_list =itertracer_arg_list
     )
   )
 
@@ -662,14 +662,14 @@ itertracer <- function(
   }
 
   # final touches --------------------------------------------------------------
-  arg_call_nms <- intersect(names(tracer_arg_list), names(arg_list))
-  tracer_arg_list[arg_call_nms] <- arg_list[arg_call_nms]
+  arg_call_nms <- intersect(namesitertracer_arg_list), names(arg_list))
+ itertracer_arg_list[arg_call_nms] <- arg_list[arg_call_nms]
   out <- list(
     call = match.call(),
-    call_args = tracer_arg_list,
+    call_args =itertracer_arg_list,
     trace_list = trace_list
   )
-  class(out) <- c("tracer", "list")
+  class(out) <- c(itertracer", "list")
 
   return(out)
 }
@@ -678,8 +678,8 @@ itertracer <- function(
 
 #' @export
 #' @importFrom utils str
-print.tracer <- function(x, ...) {
-  cat("--- tracer object ---\n")
+printitertracer <- function(x, ...) {
+  cat("---itertracer object ---\n")
   cat("params:\n")
   param_nms <- names(x[["trace_list"]])
   lapply(param_nms, function(param_nm) {

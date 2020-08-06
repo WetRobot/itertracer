@@ -3,7 +3,7 @@
 \name{itertracer_callbacks_defaults}
 \alias{itertracer_callbacks_defaults}
 \alias{itertracer_callbacks}
-\title{\link{tracer} Callback Functions}
+\title{\linkitertracer} Callback Functions}
 \usage{
 itertracer_callbacks_defaults()
 
@@ -24,7 +24,7 @@ itertracer_callbacks(
 \item{sample_chains}{function to go through the separate chains; e.g. an application of
 \link[parallel:mclapply]{parallel::mclapply}}
 
-\item{on_init}{called on initiation of \link{tracer}}
+\item{on_init}{called on initiation of \linkitertracer}}
 
 \item{param_order}{when stepping through parameters within an iteration, this function is called
 to determine the order of the parameters}
@@ -45,17 +45,17 @@ set a maximum time this way}
 \item{on_exit}{called on exit even when an error is raised by using \link{on.exit}}
 }
 \description{
-Handle callback functions passed to \link{tracer}.
+Handle callback functions passed to \linkitertracer}.
 }
 \details{
 \itemize{
 \item \code{itertracer_callbacks_defaults} returns a list of default callback functions
-used by \link{tracer} when the user does not define custom callbacks
+used by \linkitertracer} when the user does not define custom callbacks
 }
 
 \itemize{
 \item \code{itertracer_callbacks} accepts functions as arguments and returns a list
-of callback functions to be used by \link{tracer}, supplemented by
+of callback functions to be used by \linkitertracer}, supplemented by
 defaults from \link{itertracer_callbacks_defaults} as necessary
 }
 }
