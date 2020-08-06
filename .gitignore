@@ -2,5 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-tracer/
-tracer_log.txt
+itertracer/
+itertracer_log.txt

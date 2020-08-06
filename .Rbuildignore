@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-itertracer_log.txt$
-itertracer$
+^itertracer_log.txt$
+^itertracer$
 ^\.travis\.yml$
 ^appveyor\.yml$

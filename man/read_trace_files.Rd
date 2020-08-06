@@ -16,7 +16,7 @@ read_trace_files(
 \arguments{
 \item{dir}{\verb{[NULL, character]} (optional, default \code{NULL})
 \itemize{
-\item \code{NULL}: directory is taken as the newest in \verbitertracer/}
+\item \code{NULL}: directory is taken as the newest in \verb{itertracer/}
 \item \code{character}: read files from this dir
 }}
 

@@ -97,7 +97,7 @@ Run an iterative process and collect a trace of the iterations.
 \examples{
 ## beta-binomial Gibbs sampling, multi-core
 
-g <-itertracer(
+g <- itertracer(
   fixed = list(n = 20L),
   param_init = lapply(list(x = 10, theta = 0.5), as.array),
   step_funs = list(

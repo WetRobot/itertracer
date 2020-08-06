@@ -56,10 +56,10 @@ itertracer_callbacks_defaults <- function() {
       n_iter <- arg_list[["n_iter"]]
       n_chains <- arg_list[["n_chains"]]
 
-      if (!dir.exists(itertracer")) {
-        dir.create(itertracer")
+      if (!dir.exists("itertracer")) {
+        dir.create("itertracer")
       }
-      sample_dir <- paste0(itertracer/", gsub("[^0-9]", "_", t), "/")
+      sample_dir <- paste0("itertracer/", gsub("[^0-9]", "_", t), "/")
       dir.create(sample_dir)
 
       msg <- paste0("*itertracer: ", t,": starting processing ", n_iter,
@@ -83,12 +83,12 @@ itertracer_callbacks_defaults <- function() {
         msg, "\n",
         "*itertracer: sessionInfo():\n"
       )
-      cat(msg, file = itertracer_log.txt", append = TRUE)
+      cat(msg, file = "itertracer_log.txt", append = TRUE)
       sample_dir_msg <- msg[which(grepl("\\*", msg))[1]:length(msg)]
       cat(sample_dir_msg,
-          file = paste0(sample_dir, itertracer_log.txt"), append = FALSE)
+          file = paste0(sample_dir, "itertracer_log.txt"), append = FALSE)
 
-      sink(file = paste0(sample_dir, itertracer_log.txt"), append = TRUE)
+      sink(file = paste0(sample_dir, "itertracer_log.txt"), append = TRUE)
       print(utils::sessionInfo())
       if (git2r::in_repository()) {
         cat("\n *itertracer: git status:\n")
@@ -96,7 +96,7 @@ itertracer_callbacks_defaults <- function() {
         summary(git2r::repository())
       }
       sink()
-      sink(file = itertracer_log.txt", append = TRUE)
+      sink(file = "itertracer_log.txt", append = TRUE)
       print(utils::sessionInfo())
       if (git2r::in_repository()) {
         cat("\n *itertracer: git status:\n")
@@ -181,8 +181,8 @@ itertracer_callbacks_defaults <- function() {
         )
         message(msg)
         msg <- paste0(msg, "\n")
-        cat(msg, file = itertracer_log.txt", append = TRUE)
-        cat(msg, file = paste0(sample_dir, itertracer_log.txt"), append = TRUE)
+        cat(msg, file = "itertracer_log.txt", append = TRUE)
+        cat(msg, file = paste0(sample_dir, "itertracer_log.txt"), append = TRUE)
         invisible(NULL)
       }
       arg_list
@@ -202,7 +202,7 @@ itertracer_callbacks_defaults <- function() {
           as.character(Sys.time())
         )
         message(msg)
-        cat(msg, "\n", file = itertracer_log.txt", append = TRUE)
+        cat(msg, "\n", file = "itertracer_log.txt", append = TRUE)
       }
       went_over_time
     },
@@ -219,8 +219,8 @@ itertracer_callbacks_defaults <- function() {
                     " iterations completed in ",
                     time_elapsed(init_time))
       message(msg)
-      cat("\n", msg, "\n", file = itertracer_log.txt", append = TRUE)
-      cat("\n", msg, "\n", file = paste0(sample_dir, itertracer_log.txt"),
+      cat("\n", msg, "\n", file = "itertracer_log.txt", append = TRUE)
+      cat("\n", msg, "\n", file = paste0(sample_dir, "itertracer_log.txt"),
           append = TRUE)
       arg_list
     },
@@ -235,20 +235,20 @@ itertracer_callbacks_defaults <- function() {
                     " iterations completed in ",
                     time_elapsed(init_time))
       message(msg)
-      cat("\n", msg, "\n", file = itertracer_log.txt", append = TRUE)
-      cat("\n", msg, "\n", file = paste0(sample_dir, itertracer_log.txt"),
+      cat("\n", msg, "\n", file = "itertracer_log.txt", append = TRUE)
+      cat("\n", msg, "\n", file = paste0(sample_dir, "itertracer_log.txt"),
           append = TRUE)
       arg_list
     },
-    on_exit = functionitertracer_object, arg_list,itertracer_arg_list) {
+    on_exit = function (itertracer_object, arg_list,itertracer_arg_list) {
       sample_dir <- arg_list[["sample_dir"]]
-      if (!is.nullitertracer_object) && dir.exists(sample_dir)) {
-       itertracer_object_path <- paste0(sample_dir, itertracer_object.rds")
-       itertracer_log_path <- paste0(sample_dir, itertracer_log.txt")
-        saveRDS(object =itertracer_object, file =itertracer_object_path)
+      if (!is.null(itertracer_object) && dir.exists(sample_dir)) {
+        itertracer_object_path <- paste0(sample_dir, "itertracer_object.rds")
+        itertracer_log_path <- paste0(sample_dir, "itertracer_log.txt")
+        saveRDS(object =itertracer_object, file = itertracer_object_path)
         sample_dir_file_paths <-  dir(sample_dir, full.names = TRUE)
         sample_dir_file_paths <- normalizePath(sample_dir_file_paths)
-        keep_file_paths <- citertracer_object_path,itertracer_log_path)
+        keep_file_paths <- c(itertracer_object_path, itertracer_log_path)
         keep_file_paths <- normalizePath(keep_file_paths)
         del_file_paths <- setdiff(
           sample_dir_file_paths, keep_file_paths
@@ -551,7 +551,7 @@ itertracer <- function(
 
   # prep -----------------------------------------------------------------------
   call <- match.call()
- itertracer_arg_list <- mget(names(formals(itertracer")))
+  itertracer_arg_list <- mget(names(formals("itertracer")))
 
   callbacks <- do.call(itertracer_callbacks, callbacks, quote = TRUE)
 
@@ -580,9 +580,9 @@ itertracer <- function(
   out <- NULL
   on.exit(
     callbacks[["on_exit"]](
-     itertracer_object = out,
+      itertracer_object = out,
       arg_list = arg_list,
-     itertracer_arg_list =itertracer_arg_list
+      itertracer_arg_list =itertracer_arg_list
     )
   )
 
@@ -662,14 +662,14 @@ itertracer <- function(
   }
 
   # final touches --------------------------------------------------------------
-  arg_call_nms <- intersect(namesitertracer_arg_list), names(arg_list))
- itertracer_arg_list[arg_call_nms] <- arg_list[arg_call_nms]
+  arg_call_nms <- intersect(names(itertracer_arg_list), names(arg_list))
+  itertracer_arg_list[arg_call_nms] <- arg_list[arg_call_nms]
   out <- list(
     call = match.call(),
     call_args =itertracer_arg_list,
     trace_list = trace_list
   )
-  class(out) <- c(itertracer", "list")
+  class(out) <- c("itertracer", "list")
 
   return(out)
 }
@@ -678,7 +678,7 @@ itertracer <- function(
 
 #' @export
 #' @importFrom utils str
-printitertracer <- function(x, ...) {
+print.itertracer <- function(x, ...) {
   cat("---itertracer object ---\n")
   cat("params:\n")
   param_nms <- names(x[["trace_list"]])
