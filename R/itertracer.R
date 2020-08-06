@@ -3,14 +3,14 @@
 
 
 
-#' @rdname tracer_callbacks
+#' @rdname itertracer_callbacks
 #' @export
 #' @details
-#' - `tracer_callbacks_defaults` returns a list of default callback functions
+#' - `itertracer_callbacks_defaults` returns a list of default callback functions
 #'   used by [tracer] when the user does not define custom callbacks
 #' @importFrom git2r repository commits in_repository
 #' @importFrom utils sessionInfo
-tracer_callbacks_defaults <- function() {
+itertracer_callbacks_defaults <- function() {
   callbacks <- list(
     sample_chains = function(chain_space, chain_iterator_fun, n_parallel = 1L) {
       n_chains <- length(chain_space)
@@ -270,7 +270,7 @@ tracer_callbacks_defaults <- function() {
 #'
 
 
-#' @rdname tracer_callbacks
+#' @rdname itertracer_callbacks
 #' @export
 #' @param sample_chains
 #' function to go through the separate chains; e.g. an application of
@@ -296,10 +296,10 @@ tracer_callbacks_defaults <- function() {
 #' @param on_exit
 #' called on exit even when an error is raised by using [on.exit]
 #' @details
-#' - `tracer_callbacks` accepts functions as arguments and returns a list
+#' - `itertracer_callbacks` accepts functions as arguments and returns a list
 #'   of callback functions to be used by [tracer], supplemented by
-#'   defaults from [tracer_callbacks_defaults] as necessary
-tracer_callbacks <- function(
+#'   defaults from [itertracer_callbacks_defaults] as necessary
+itertracer_callbacks <- function(
   sample_chains = NULL,
   on_init = NULL,
   param_order = NULL,
@@ -313,9 +313,9 @@ tracer_callbacks <- function(
 ) {
   mc <- match.call()
 
-  defaults <- tracer_callbacks_defaults()
+  defaults <- itertracer_callbacks_defaults()
 
-  fun_nms <- names(formals(tracer_callbacks))
+  fun_nms <- names(formals(itertracer_callbacks))
   fun_list <- mget(fun_nms)
   fun_list[vapply(fun_list, is.null, logical(1))] <- NULL
   fun_nms <- names(fun_list)
@@ -348,7 +348,7 @@ tracer_callbacks <- function(
   callbacks
 }
 stopifnot(
-  identical(names(formals(tracer_callbacks)), names(tracer_callbacks_defaults()))
+  identical(names(formals(itertracer_callbacks)), names(itertracer_callbacks_defaults()))
 )
 
 
@@ -402,7 +402,7 @@ random_seeds <- function(n) {
 #'
 #' - named list of functions called at various points of the process (pre-iter,
 #'   post-iter, etc.)
-#' - supplied to [tracer_callbacks]
+#' - supplied to [itertracer_callbacks]
 #' @param n_iter number of iterations
 #' @param n_chains number of separate chains to sample
 #' @param n_burn number of iterations out of \code{n_iter} to run before
@@ -447,7 +447,7 @@ random_seeds <- function(n) {
 #'
 #' @import data.table
 #' @export
-tracer <- function(
+itertracer <- function(
   param_init,
   step_funs,
   fixed = list(),
@@ -553,7 +553,7 @@ tracer <- function(
   call <- match.call()
   tracer_arg_list <- mget(names(formals("tracer")))
 
-  callbacks <- do.call(tracer_callbacks, callbacks, quote = TRUE)
+  callbacks <- do.call(itertracer_callbacks, callbacks, quote = TRUE)
 
   arg_list <- list(
     param_list = param_init,
