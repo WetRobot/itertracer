@@ -1,16 +1,16 @@
 
-# tracer
+# itertracer
 
 <!-- badges: start -->
-[![Build Status](https://travis-ci.org/WetRobot/tracer.png?branch=master)](https://travis-ci.org/WetRobot/tracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobot/tracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/tracer)
+[![Build Status](https://travis-ci.org/WetRobot/tracer.png?branch=master)](https://travis-ci.org/WetRobot/itertracer) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/WetRobot/tracer?branch=master&svg=true)](https://ci.appveyor.com/project/WetRobot/itertracer)
 <!-- badges: end -->
 
-tracer enables easy tracing of an iterative process such as Gibbs sampling.
+itertracer enables easy tracing of an iterative process such as Gibbs sampling.
 
 ## Installation
 
 ``` r
-devtools::install_github("WetRobot/tracer")
+devtools::install_github("WetRobot/itertracer")
 ```
 
 ## Example
@@ -18,11 +18,11 @@ devtools::install_github("WetRobot/tracer")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(tracer)
+library(itertracer)
 
 ## beta-binomial Gibbs sampling, multi-core
 
-g <- tracer(
+g <- itertracer(
   fixed = list(n = 20L),
   param_init = lapply(list(x = 10, theta = 0.5), as.array),
   step_funs = list(
